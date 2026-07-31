@@ -1,0 +1,56 @@
+/* ============================================================================
+   hero-fold.css — dải bằng chứng + cặp CTA neo đáy hero.
+
+   soul.md: "5/5 hero tham chiếu đều có cặp CTA + bằng chứng thật". Khối
+   `.fold` do page.js dựng vì nó phải nằm TRONG `.scrub__stage` mới ghim theo
+   cuộn được (`.scrub__story` ở lớp trên có pointer-events:none, không phải
+   chỗ cho link thật).
+
+   Không còn override `.scrub__chapter-pin` riêng cho hero: từ khi title căn
+   giữa khung (xem scrub-type.css, owner override) thay vì neo đáy, nó không
+   còn tranh chỗ với dải fold neo đáy này nữa — đã kiểm bằng bounding-box
+   headless, không chạm nhau ở mọi viewport đã thử.
+
+   OWNER OVERRIDE: gạch chỉ phía trên hàng đọc đã gỡ — phân cách bằng khoảng
+   trắng (padding-top), không phải đường kẻ.
+
+   position: absolute (KHÔNG fixed) — Tenant Law: section là khách trọ, không
+   được tạo node ghim viewport ngoài luồng bình thường của chính nó.
+   ========================================================================== */
+
+.fold {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2; /* trên canvas/poster (không z-index), dưới .scrub__story (3) */
+  padding-bottom: clamp(20px, 3.4vh, 40px);
+}
+
+.fold__row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+.fold__specs {
+  margin: 0;
+  font-weight: var(--weight-label);
+  font-size: var(--size-caption);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.fold__cta {
+  display: flex;
+  gap: var(--space-1);
+}
+
+@media (max-width: 860px) {
+  .fold__row { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+}

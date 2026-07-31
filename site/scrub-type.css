@@ -1,0 +1,177 @@
+/* ============================================================================
+   scrub-type.css — chữ trong cảnh cuộn: MỘT dòng title, in thẳng lên phim.
+
+   OWNER OVERRIDE (thắng bản trước + SPEC.md khi xung đột):
+     · Title CĂN GIỮA khung ghim (không neo đáy nữa) — chạy rộng ngang phim,
+       không giới hạn ch-width, không gạch chỉ phía trên/dưới nó.
+     · KHÔNG có dòng mô tả nào đi kèm title, ở bất kỳ cảnh nào (kể cả số 249 —
+       không caption). Beat chỉ có title, và title là chữ DUY NHẤT trên phim.
+     · Title là chữ VIỀN RỖNG (color:transparent + text-stroke) để nền phim lộ
+       qua nét chữ — đọc như in trực tiếp lên phim, không phải đề can dán đè.
+       Bắt buộc có phương án dự phòng: đặc ở mobile, đặc khi prefers-contrast,
+       đặc khi trình duyệt không hỗ trợ text-stroke (@supports) — thiếu cái
+       cuối cùng thì chữ BIẾN MẤT ở trình duyệt không hỗ trợ (transparent, vô
+       viền) — đó là lỗi nghiêm trọng hơn hẳn việc "không có viền".
+     · PARALLAX: title trôi khác tốc với phim theo --scrub-progress (biến của
+       chính engine, đọc qua kế thừa CSS — không JS, không window.scrollY).
+       Tắt hẳn dưới prefers-reduced-motion.
+
+   QUYỀN SỞ HỮU HOẠT HOẠ (một phần tử chỉ một chủ):
+     .scrub__copy: opacity do class `.is-active` (engine bật/tắt) · transform
+     (parallax) do chính rule này, đọc thẳng biến --scrub-progress — hai
+     thuộc tính khác nhau, không ai giẫm lên ai.
+     .scrub__title: clip-path (lộ dòng) · color/stroke (viền rỗng) — cũng hai
+     thuộc tính khác nhau trên cùng phần tử, không xung đột.
+     GSAP KHÔNG chạm bất kỳ thuộc tính nào ở đây — GSAP chỉ sở hữu section tĩnh.
+   ========================================================================== */
+
+.scrub--film {
+  --scrub-bg: var(--color-surface);
+  --scrub-ink: var(--color-ink);
+  --scrub-ink-soft: var(--color-ink-soft);
+  --scrub-accent: var(--color-brand);
+}
+
+/* Không override .scrub__chapter-pin ở đây nữa — mặc định của engine đã là
+   align-items:center (scrub-section.css), đúng thứ owner muốn: title giữa
+   khung, không neo đáy. */
+
+.scrub--film .scrub__copy {
+  width: min(1440px, 100% - clamp(32px, 6vw, 128px));
+  margin-inline: auto;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-none);
+  backdrop-filter: none;
+  box-shadow: none;
+  text-align: center;
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  /* Parallax: một thuộc tính (transform), một chủ (rule này). Tắt hẳn dưới
+     reduced-motion ở cuối file. */
+  transform: translate3d(0, calc((var(--scrub-progress, 0) - 0.5) * -8vh), 0);
+}
+.scrub--film .scrub__chapter.is-active .scrub__copy { opacity: 1; }
+
+/* Anatomy beat 2 ("38 parts") trải chi tiết dày khắp khung, có mảng tối
+   (bo mạch, ống kính) ngay giữa khung — chữ viền rỗng mất tương phản ở đó.
+   Owner: "shift the block vertically rather than adding any backdrop." Đẩy
+   lên vùng nền trống phía trên khung, KHÔNG thêm lớp phủ nào. Ghi đè toàn bộ
+   transform (một chủ, một giá trị) — không cộng dồn với rule parallax gốc. */
+.scrub--anatomy .scrub__chapter:nth-child(2) .scrub__copy {
+  transform: translate3d(0, calc((var(--scrub-progress, 0) - 0.5) * -8vh - 18vh), 0);
+}
+
+.scrub--film .scrub__title {
+  margin: 0;
+  font-weight: var(--weight-display);
+  font-size: var(--size-display);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+  white-space: pre-line; /* tôn trọng \n trong beat, ngắt dòng như áp phích */
+  color: var(--color-ink); /* fallback đặc — @supports bên dưới mới đục rỗng nó */
+
+  /* Dòng chữ dựng lên từ dưới một mặt nạ — cùng thủ pháp GSAP dùng ở section tĩnh. */
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--motion-slow) cubic-bezier(0.16, 1, 0.3, 1);
+}
+.scrub--film .scrub__chapter.is-active .scrub__title { clip-path: inset(0 0 0 0); }
+
+/* Cảnh tháo rời trải hết bề ngang khung nên chữ nhỏ hơn một nấc. */
+.scrub--anatomy .scrub__title { font-size: var(--size-head); }
+
+/* Hero beat 1 — động tác chữ ký chính (spine §0.1): "249" bắn ĐÚNG MỘT LẦN ở
+   cỡ viewport. Token size riêng cho một mình nó vì lớn hơn hẳn --size-display
+   dùng cho các cảnh khác — hai đỉnh thang chữ không được trùng nhau. Không có
+   dòng mô tả nào đi kèm (owner override) — chỉ số và đơn vị GRAMS. */
+[data-scrub="hero"] .scrub__chapter:nth-child(1) .scrub__title {
+  font-size: var(--size-numeral);
+  letter-spacing: -0.06em;
+}
+[data-scrub="hero"] .scrub__chapter:nth-child(1) .scrub__title::after {
+  /* "GRAMS" chứ không phải "G": một chữ cái đơn vẫn phải giải mã, mà cả câu
+     chuyện của con số nằm ở đơn vị. Cỡ tính bằng `em` — tức theo con số, không
+     theo --size-caption: dán 11px cạnh một chữ số ~168px thì tỉ lệ 15:1 làm đơn
+     vị biến mất và "249" thành con số trống nghĩa (chính là lỗi owner bắt). */
+  content: 'GRAMS';
+  margin-left: 0.12em;
+  vertical-align: baseline;
+  font-weight: var(--weight-label);
+  /* Sàn 0.8rem: trên màn hẹp con số co lại nên 0.2em thuần sẽ rơi về ~6px —
+     đúng lại cái lỗi vừa sửa, chỉ ở viewport khác. max() giữ tỉ lệ ở desktop
+     và giữ khả năng đọc ở mobile bằng một dòng, không cần media query riêng. */
+  font-size: max(0.8rem, 0.2em);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-brand); /* đặc, KHÔNG theo viền rỗng của số chính — mảng đặc duy nhất
+                                 trong bố cục, mắt phải rơi vào nó (owner fix, không dùng
+                                 brand-text vì đó là biến thể tối hơn cho chữ-trên-nền-trắng) */
+  -webkit-text-stroke: 0;
+  text-stroke: 0;
+}
+
+/* .scrub--modes cố tình KHÔNG override font-size ở đây — mode word thừa
+   hưởng --size-display của rule gốc phía trên, giống các cảnh scrub khác trừ
+   anatomy đã tháo rời. Không có dòng số liệu đi kèm mode word (owner override
+   huỷ T4.3 cũ) — CINE/NORMAL/SPORT là chữ duy nhất; số liệu của mode vẫn sống
+   trong đoạn sr-only của section (page.js không mất dữ kiện, chỉ mất bản hiện
+   thị hai lần). */
+
+/* Viên thuốc tag là tàn dư của bản trước, vi phạm persona (border-radius:
+   999px). Engine vẫn có thể render nếu ai đó lỡ truyền `tags` trở lại — hàng
+   rào này chặn nó xuất hiện, không chỉ dọn cái đang có. */
+.scrub__tags { display: none; }
+
+/* ---- title viền rỗng — chỉ khi trình duyệt hỗ trợ, luôn có phương án đặc -- */
+@supports (-webkit-text-stroke: 1px black) or (text-stroke: 1px black) {
+  .scrub--film .scrub__title {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--color-ink);
+    text-stroke: 2px var(--color-ink);
+  }
+  [data-scrub="hero"] .scrub__chapter:nth-child(1) .scrub__title {
+    -webkit-text-stroke: 3px var(--color-ink);
+    text-stroke: 3px var(--color-ink);
+  }
+}
+
+/* ---- thanh tiến độ + đường ray: không phải hairline trang trí, là chỉ báo
+   tiến độ cuộn thật — owner override không nhắm tới các phần tử này. -------- */
+.scrub--film .scrub__progress { background: var(--color-rule-soft); height: var(--rule-hair); }
+.scrub--film .scrub__progress i { background: var(--color-brand); }
+.scrub--film .scrub__route i {
+  border-radius: var(--radius-none);
+  width: 18px; height: var(--rule-hair);
+  background: var(--color-rule-soft);
+}
+.scrub--film .scrub__route i.is-active { background: var(--color-brand); }
+
+/* ---- fallback đặc bắt buộc: mobile (chữ quá nhỏ để viền còn đọc được) ----- */
+@media (max-width: 860px) {
+  .scrub--film .scrub__title {
+    font-size: clamp(2rem, 11vw, 3.5rem);
+    color: var(--color-ink);
+    -webkit-text-stroke: 0;
+    text-stroke: 0;
+  }
+}
+
+/* ---- fallback đặc bắt buộc: người dùng xin tương phản cao hơn ------------- */
+@media (prefers-contrast: more) {
+  .scrub--film .scrub__title {
+    color: var(--color-ink);
+    -webkit-text-stroke: 0;
+    text-stroke: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrub--film .scrub__copy { opacity: 1; transition: none; transform: none; }
+  /* Cùng specificity với override anatomy beat 2 ở trên — phải lặp lại
+     selector đó ở đây để thắng, chứ ".scrub--film .scrub__copy" phía trên
+     (ít lớp hơn) không đủ sức ghi đè nó. */
+  .scrub--anatomy .scrub__chapter:nth-child(2) .scrub__copy { transform: none; }
+  .scrub--film .scrub__title { clip-path: none; transition: none; }
+}

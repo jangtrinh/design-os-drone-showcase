@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+# Chỉ `site/` được publish. Giữ nguyên cây repo (design/, pipeline/, docs/) thay vì
+# dồn file tĩnh ra gốc — Pages nhận artifact từ một thư mục con nên không cần đánh đổi.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Một lần deploy tại một thời điểm; không huỷ lần đang chạy giữa chừng.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Trang không có bước build: HTML/CSS/JS thuần, font + GSAP + icon đã vendored.
+      # Nếu bước này hỏng thì lỗi nằm ở đường dẫn, không phải ở toolchain.
+      - name: Verify the entry point exists
+        run: test -f site/index.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

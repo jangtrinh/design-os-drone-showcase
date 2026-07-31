@@ -1,0 +1,173 @@
+/* ============================================================================
+   anno.css — TOUR CHÚ THÍCH, chỉ sống trong cảnh #anatomy (spine §0.1: động
+   tác chữ ký PHỤ duy nhất của trang).
+
+   Ngữ pháp: một ô vuông đặc màu thương hiệu (dot), một viền nở-tan báo hiệu
+   điểm đang mở (ping), một khối ink phẳng (panel) nối bằng KHOẢNG CÁCH, không
+   còn gạch dẫn — owner override gỡ mọi gạch chỉ 1px trang trí trên trang, và
+   đường dẫn chấm→panel nằm trong danh sách đó. Không nền mờ, không viền bao,
+   không bo góc, không blur, không bóng.
+
+   Cơ chế hiện/ẩn/xoay do page.js cầm máy trạng thái; file này CHỈ phản ứng
+   với hai class page.js được phép ghi (`.is-live` trên lớp, `.is-active` trên
+   một điểm) cộng hai biến neo panel (`--nudge-x`, `--nudge-y`). Không có JS
+   hoạt hoạ nào ở đây ngoài việc bật/tắt class và set biến.
+
+   position: absolute, không bao giờ fixed — Tenant Law: section là khách trọ.
+   ========================================================================== */
+
+.anno {
+  position: absolute;
+  inset: 0;
+  z-index: 2;                 /* trên canvas (1), dưới lớp chữ story (3) */
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Khớp đúng vùng ảnh canvas thực sự vẽ (cover-crop). Kích thước/vị trí do
+   page.js tính (syncFrame), vì cover phụ thuộc tỉ lệ viewport mà CSS không
+   tự suy ra được. */
+.anno__frame { position: absolute; }
+
+/* ---- điểm chú thích: nút thật, hit target 44×44 trong suốt ---------------- */
+.anno__pt {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+
+  /* HIDDEN mặc định: opacity 0 + visibility hidden — bàn phím không tab vào
+     nút vô hình. Reveal chỉ khi `.anno.is-live`. */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear var(--motion-base);
+}
+.anno.is-live .anno__pt {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0s;
+}
+
+/* ---- dot: 8px nghỉ / 12px active — đổi bằng scale, không đổi width/height - */
+.anno__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+  transform: translate(-50%, -50%) scale(1);
+  transition: transform var(--motion-fast) cubic-bezier(0.16, 1, 0.3, 1);
+}
+.anno__pt.is-active .anno__dot { transform: translate(-50%, -50%) scale(1.5); } /* 8px -> 12px */
+
+/* ---- ping: chỉ trên điểm active, chỉ transform/opacity -------------------- */
+.anno__ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: var(--rule-hair) solid var(--color-brand);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0;
+}
+.anno__pt.is-active .anno__ping {
+  animation: anno-ping 2.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes anno-ping {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+/* ---- panel: khối ink phẳng, nối với chấm bằng khoảng cách (--space-2) ----- */
+.anno__panel {
+  position: absolute;
+  width: min(320px, 40vw);
+  background: var(--color-ink);
+  border-radius: var(--radius-none);
+  padding: var(--space-2);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(var(--nudge-x, 0px), var(--nudge-y, 0px));
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
+}
+.anno__pt--r .anno__panel { left: 50%; }
+.anno__pt--l .anno__panel { right: 50%; }
+.anno__pt--down .anno__panel { top: calc(50% + var(--space-2)); }
+.anno__pt--up .anno__panel { bottom: calc(50% + var(--space-2)); }
+.anno__pt.is-active .anno__panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.anno__caption {
+  display: block;
+  margin: 0 0 var(--space-1);
+  font-weight: var(--weight-label);
+  font-size: var(--size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+.anno__line {
+  display: block;
+  margin: 0;
+  font-size: var(--size-small);
+  line-height: 1.5;
+  color: var(--color-ink-invert-soft);
+}
+.anno__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.anno__count {
+  flex: 0 0 auto;
+  font-weight: var(--weight-label);
+  font-size: var(--size-caption);
+  letter-spacing: 0.14em;
+  color: var(--color-ink-invert-soft);
+}
+/* Đồng hồ đếm ngược tới lượt xoay kế — ngoại lệ duy nhất khỏi easing chung:
+   linear vì đây là một phép đo thời gian, không phải một cú vào khung. */
+.anno__meter {
+  flex: 1 1 auto;
+  height: var(--rule-hair);
+  background: var(--color-brand);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+.anno__meter.is-running { animation: anno-meter 5s linear forwards; }
+@keyframes anno-meter { to { transform: scaleX(1); } }
+
+/* Vòng xoay tạm dừng khi hover/focus đúng điểm đang mở — thuần CSS
+   (:hover/:focus-within), không cần page.js ghi thêm class thứ ba. */
+.anno__pt.is-active:hover .anno__meter.is-running,
+.anno__pt.is-active:focus-within .anno__meter.is-running {
+  animation-play-state: paused;
+}
+
+/* ---- MOBILE (<860px): chỉ chấm, trang trí, không tour --------------------- */
+@media (max-width: 860px) {
+  .anno__pt { pointer-events: none; }
+  .anno__panel { display: none; }
+}
+
+/* ---- REDUCED: không timer, không ping, không meter ------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  .anno__pt { transition: none; }
+  .anno__dot { transition: none; }
+  .anno__ping { display: none; }
+  .anno__panel { transition: none; }
+  .anno__meter, .anno__meter.is-running { animation: none; }
+}

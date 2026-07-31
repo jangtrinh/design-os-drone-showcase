@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OPAH ONE — a 249-gram drone that flies indoors</title>
+<meta name="description" content="OPAH ONE: a 249-gram drone with a molded guard ring, 4K60 video, 31-minute flight. Built with Design:OS — Tenant-contract scroll-scrub, GSAP choreography.">
+<link rel="icon" href="data:,"> <!-- chặn browser tự xin /favicon.ico rồi ăn 404 vô cớ -->
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="scrub-section.css">
+<link rel="stylesheet" href="page.css">
+<link rel="stylesheet" href="sections.css">
+<link rel="stylesheet" href="scrub-type.css">
+<link rel="stylesheet" href="anno.css">
+<link rel="stylesheet" href="hero-fold.css">
+<style>
+/* Lưới an toàn toàn trang cho prefers-reduced-motion — phòng hờ tuyến cuối,
+   không thay cho từng nhánh reduce riêng (anno.css/scrub-type.css/motion.js
+   vẫn giữ nguyên, đây là CỘNG THÊM). Bắt cả những animation/transition mà một
+   nhánh riêng lẻ có thể bỏ sót, kể cả CSS bên thứ ba nếu sau này có. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="nav__mark" href="#top">OPAH<span>ONE</span></a>
+  <nav class="nav__links" aria-label="Page sections">
+    <a href="#why">01 Why</a>
+    <a href="#anatomy">02 Inside</a>
+    <a href="#modes">03 Modes</a>
+    <a href="#specs">04 Specs</a>
+  </nav>
+  <a class="btn btn--brand" href="https://github.com/jangtrinh/design-os" target="_blank" rel="noopener">Get Design:OS</a>
+</header>
+
+<main id="main">
+
+  <!-- 01 ─ HERO: drone hiện dần theo cuộn (Drone-Circling, 96 frame) -->
+  <section id="top" class="scrub scrub--film" data-scrub="hero" aria-label="OPAH ONE overview">
+    <h1 class="sr-only">OPAH ONE — a 249-gram drone, molded guard ring, 4K60 video, 31-minute flight.</h1>
+  </section>
+
+  <!-- 02 ─ BĂNG TUYÊN NGÔN: một mảng màu thương hiệu phẳng, chữ đen trên đó -->
+  <section class="claim">
+    <div class="grid">
+      <p class="tag tag--on-brand">Claim</p>
+      <p class="claim__line" data-split>We shaved off the last gram so you never need permission.</p>
+      <p class="claim__foot">249 g — under the registration limit in 41 countries.</p>
+    </div>
+  </section>
+
+  <!-- 03 ─ BA QUYẾT ĐỊNH: hàng, icon Phosphor literal 1 cột đầu lưới -->
+  <section id="why" class="rows">
+    <div class="grid">
+      <p class="tag">01 — Why OPAH ONE</p>
+      <h2 class="head" data-split>Three decisions, built in.</h2>
+    </div>
+
+    <ol class="row-list">
+      <li class="row" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.27,47,25.53a8,8,0,0,0,4.2,0c1-.26,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0Z"/></svg></span>
+        <span class="row__n">01</span>
+        <h3 class="row__t">Molded guard ring</h3>
+        <p class="row__b">Not a bolt-on. Hits a wall, bounces off, keeps flying.</p>
+        <span class="row__k">Structure</span>
+      </li>
+      <li class="row" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M239.43,133l-32-80h0a8,8,0,0,0-9.16-4.84L136,62V40a8,8,0,0,0-16,0V65.58L54.26,80.19A8,8,0,0,0,48.57,85h0v.06L16.57,165a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32a7.92,7.92,0,0,0-.57-3L66.92,93.77,120,82V208H104a8,8,0,0,0,0,16h48a8,8,0,0,0,0-16H136V78.42L187,67.1,160.57,133a7.92,7.92,0,0,0-.57,3c0,23.31,24.54,32,40,32s40-8.69,40-32A7.92,7.92,0,0,0,239.43,133ZM56,184c-7.53,0-22.76-3.61-23.93-14.64L56,109.54l23.93,59.82C78.76,180.39,63.53,184,56,184Zm144-32c-7.53,0-22.76-3.61-23.93-14.64L200,77.54l23.93,59.82C222.76,148.39,207.53,152,200,152Z"/></svg></span>
+        <span class="row__n">02</span>
+        <h3 class="row__t">249 grams, on purpose</h3>
+        <p class="row__b">One number that shaped the battery, materials, and sensor size.</p>
+        <span class="row__k">Mass</span>
+      </li>
+      <li class="row" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,248,184a8,8,0,0,0,8-8V80A8,8,0,0,0,251.77,73ZM192,184H32V72H192V184Zm48-22.95-32-21.33V116.28L240,95Z"/></svg></span>
+        <span class="row__n">03</span>
+        <h3 class="row__t">Real mechanical gimbal</h3>
+        <p class="row__b">Real one-axis stabilization, not just a cropped, shaky frame.</p>
+        <span class="row__k">Camera</span>
+      </li>
+    </ol>
+
+    <dl class="figs">
+      <div class="fig"><dt>Mass</dt><dd data-count="249">249<i>g</i></dd></div>
+      <div class="fig"><dt>Flight time</dt><dd data-count="31">31<i>min</i></dd></div>
+      <div class="fig"><dt>Video</dt><dd>4K<i>60fps</i></dd></div>
+      <div class="fig"><dt>Range</dt><dd data-count="10">10<i>km</i></dd></div>
+    </dl>
+  </section>
+
+  <!-- 04 ─ CẤU TẠO: nổ tung theo cuộn + chú thích ở frame cuối -->
+  <section id="anatomy" class="scrub scrub--film scrub--anatomy" data-scrub="anatomy" aria-label="OPAH ONE, exploded view">
+    <p class="sr-only">Inside OPAH ONE: 38 parts — top shell, four motors, mainboard, one-piece battery, and camera gimbal.</p>
+  </section>
+
+  <section class="parts">
+    <div class="grid">
+      <p class="tag">02 — Six parts worth noting</p>
+      <h2 class="head head--sm" data-split>Every part fits exactly once.</h2>
+    </div>
+    <ol class="row-list row-list--tight" id="parts-list">
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M233,135a60,60,0,0,0-89.62-35.45l16.39-65.44a8,8,0,0,0-3.45-8.68A60,60,0,1,0,95.69,128.91L30.82,147.44a8,8,0,0,0-5.8,7.32,60,60,0,0,0,44.42,60.66,60.52,60.52,0,0,0,15.62,2.07,60.07,60.07,0,0,0,59.88-62l48.48,46.92a8,8,0,0,0,9.25,1.35A60,60,0,0,0,233,135Zm-121-7a16,16,0,1,1,16,16A16,16,0,0,1,112,128ZM80,76a44,44,0,0,1,62.75-39.82L127.77,96A32,32,0,0,0,99.85,112.8,43.85,43.85,0,0,1,80,76Zm27,119.57a44,44,0,0,1-65.86-34.43l59.31-16.94A32,32,0,0,0,128,160l.91,0A43.82,43.82,0,0,1,107,195.57Zm106.17-23a43.92,43.92,0,0,1-13,14.14l-44.32-42.89a31.91,31.91,0,0,0-.59-32.57,44,44,0,0,1,57.91,61.32Z"/></svg></span>
+        <span class="row__n">01</span><h3 class="row__t">Propeller</h3><p class="row__b">Foldable polycarbonate, swaps in seconds, no tools.</p><span class="row__k">PC</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M240,104H227.31L192,68.69A15.86,15.86,0,0,0,180.69,64H140V40h24a8,8,0,0,0,0-16H100a8,8,0,0,0,0,16h24V64H64A16,16,0,0,0,48,80v52H24V108a8,8,0,0,0-16,0v64a8,8,0,0,0,16,0V148H48v20.69A15.86,15.86,0,0,0,52.69,180L92,219.31A15.86,15.86,0,0,0,103.31,224h77.38A15.86,15.86,0,0,0,192,219.31L227.31,184H240a16,16,0,0,0,16-16V120A16,16,0,0,0,240,104Zm0,64H224a8,8,0,0,0-5.66,2.34L180.69,208H103.31L64,168.69V80H180.69l37.65,37.66A8,8,0,0,0,224,120h16Z"/></svg></span>
+        <span class="row__n">02</span><h3 class="row__t">Brushless motor</h3><p class="row__b">1103-size, 11,000 rpm, dual ball bearings.</p><span class="row__k">1103</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"/></svg></span>
+        <span class="row__n">03</span><h3 class="row__t">Camera cluster</h3><p class="row__b">1/1.3-inch sensor, one-axis mechanical gimbal.</p><span class="row__k">1/1.3"</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32l80.34,44-29.77,16.3-80.35-44ZM128,120,47.66,76l33.9-18.56,80.34,44ZM40,90l80,43.78v85.79L40,175.82Zm176,85.78h0l-80,43.79V133.82l32-17.51V152a8,8,0,0,0,16,0V107.55L216,90v85.77Z"/></svg></span>
+        <span class="row__n">04</span><h3 class="row__t">Top shell</h3><p class="row__b">Injection-molded PA12, one piece, four screws.</p><span class="row__k">PA12</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM88,160a8,8,0,1,1-8,8A8,8,0,0,1,88,160ZM48,48H80v97.38a24,24,0,1,0,16,0V115.31l48,48V208H48ZM208,208H160V160a8,8,0,0,0-2.34-5.66L96,92.69V48h32V72a8,8,0,0,0,2.34,5.66l16,16A23.74,23.74,0,0,0,144,104a24,24,0,1,0,24-24,23.74,23.74,0,0,0-10.34,2.35L144,68.69V48h64V208ZM168,96a8,8,0,1,1-8,8A8,8,0,0,1,168,96Z"/></svg></span>
+        <span class="row__n">05</span><h3 class="row__t">Mainboard</h3><p class="row__b">Six layers, dual IMU, video transmission chip.</p><span class="row__k">6-layer</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M200,56H32A24,24,0,0,0,8,80v96a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V80A24,24,0,0,0,200,56Zm8,120a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H200a8,8,0,0,1,8,8ZM184,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm-40,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm-40,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM64,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm192,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Z"/></svg></span>
+        <span class="row__n">06</span><h3 class="row__t">Battery</h3><p class="row__b">2,450 mAh, one cell, on the center axis.</p><span class="row__k">2450mAh</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 05 ─ BA CHẾ ĐỘ BAY: cảnh cuộn thứ ba (Drone-Fly-4K, 96 frame) -->
+  <section id="modes" class="scrub scrub--film scrub--modes" data-scrub="modes" aria-label="OPAH ONE flight modes">
+    <p class="sr-only">Three flight modes: Cine slows yaw to 40%, Normal holds position by GPS, Sport unlocks 68 km/h.</p>
+  </section>
+
+  <!-- 06 ─ THÔNG SỐ -->
+  <section id="specs" class="specs">
+    <div class="grid">
+      <p class="tag">04 — Specs</p>
+      <h2 class="head head--sm" data-split>The full numbers, flaws included.</h2>
+      <p class="lede">Measured at 25°C, wind under 3 m/s, full battery. Flight time is continuous hover to 10% charge.</p>
+    </div>
+    <table class="table">
+      <caption class="sr-only">OPAH ONE specifications</caption>
+      <tbody>
+        <tr><th scope="row">Takeoff mass</th><td>249 g</td></tr>
+        <tr><th scope="row">Unfolded size</th><td>178 × 162 × 62 mm</td></tr>
+        <tr><th scope="row">Flight time</th><td>31 min</td></tr>
+        <tr><th scope="row">Top speed</th><td>68 km/h — Sport mode</td></tr>
+        <tr><th scope="row">Max altitude</th><td>3,000 m above sea level</td></tr>
+        <tr><th scope="row">Sensor</th><td>1/1.3-inch CMOS, 48 MP</td></tr>
+        <tr><th scope="row">Video</th><td>4K 60fps · 1080p 120fps</td></tr>
+        <tr><th scope="row">Stabilization</th><td>1-axis mechanical gimbal + 2-axis EIS</td></tr>
+        <tr><th scope="row">Storage</th><td>32 GB built-in, microSD up to 512 GB</td></tr>
+        <tr><th scope="row">Transmission range</th><td>10 km FCC · 6 km CE</td></tr>
+        <tr><th scope="row">Wind resistance</th><td>Level 5 — 10.7 m/s</td></tr>
+        <tr><th scope="row">Operating temp</th><td>−10°C to 40°C</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 07 ─ TRANG NÀY ĐƯỢC DỰNG THẾ NÀO -->
+  <section id="built" class="built">
+    <div class="grid">
+      <p class="tag tag--invert">05 — Build log</p>
+      <h2 class="head" data-split>Nothing here is random.</h2>
+      <p class="lede lede--invert">Three scroll scenes are WebP frames drawn to canvas by a 294-line engine, built with <a href="https://github.com/jangtrinh/design-os" target="_blank" rel="noopener">Design:OS</a>. Every step is deterministic.</p>
+    </div>
+    <ol class="row-list row-list--invert">
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40ZM40,88h80v80H40Zm96-16V56h32V72Zm-16,0H88V56h32Zm0,112v16H88V184Zm16,0h32v16H136Zm0-16V88h80v80Zm80-96H184V56h32ZM72,56V72H40V56ZM40,184H72v16H40Zm176,16H184V184h32v16Z"/></svg></span>
+        <span class="row__n">01</span><h3 class="row__t">Frames</h3><p class="row__b"><code>extract-frames.sh</code> splits the clip into two WebP tiers.</p><span class="row__k">343 frames</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M200.77,53.89A103.27,103.27,0,0,0,128,24h-1.07A104,104,0,0,0,24,128c0,43,26.58,79.06,69.36,94.17A32,32,0,0,0,136,192a16,16,0,0,1,16-16h46.21a31.81,31.81,0,0,0,31.2-24.88,104.43,104.43,0,0,0,2.59-24A103.28,103.28,0,0,0,200.77,53.89Zm13,93.71A15.89,15.89,0,0,1,198.21,160H152a32,32,0,0,0-32,32,16,16,0,0,1-21.31,15.07C62.49,194.3,40,164,40,128a88,88,0,0,1,87.09-88h.9a88.35,88.35,0,0,1,88,87.25A88.86,88.86,0,0,1,213.81,147.6ZM140,76a12,12,0,1,1-12-12A12,12,0,0,1,140,76ZM96,100A12,12,0,1,1,84,88,12,12,0,0,1,96,100Zm0,56a12,12,0,1,1-12-12A12,12,0,0,1,96,156Zm88-56a12,12,0,1,1-12-12A12,12,0,0,1,184,100Z"/></svg></span>
+        <span class="row__n">02</span><h3 class="row__t">Color</h3><p class="row__b"><code>ui color</code> pulls the orange straight from the drone's interior.</p><span class="row__k">#FF3E00</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M58.34,101.66l-32-32a8,8,0,0,1,0-11.32l32-32A8,8,0,0,1,69.66,37.66L43.31,64,69.66,90.34a8,8,0,0,1-11.32,11.32Zm40,0a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0,0-11.32l-32-32A8,8,0,0,0,98.34,37.66L124.69,64,98.34,90.34A8,8,0,0,0,98.34,101.66ZM200,40H176a8,8,0,0,0,0,16h24V200H56V136a8,8,0,0,0-16,0v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Z"/></svg></span>
+        <span class="row__n">03</span><h3 class="row__t">Tokens</h3><p class="row__b"><code>ui tokens compile</code> turns DTCG JSON into <code>tokens.css</code>.</p><span class="row__k">DTCG</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M240,104H227.31L192,68.69A15.86,15.86,0,0,0,180.69,64H140V40h24a8,8,0,0,0,0-16H100a8,8,0,0,0,0,16h24V64H64A16,16,0,0,0,48,80v52H24V108a8,8,0,0,0-16,0v64a8,8,0,0,0,16,0V148H48v20.69A15.86,15.86,0,0,0,52.69,180L92,219.31A15.86,15.86,0,0,0,103.31,224h77.38A15.86,15.86,0,0,0,192,219.31L227.31,184H240a16,16,0,0,0,16-16V120A16,16,0,0,0,240,104Zm0,64H224a8,8,0,0,0-5.66,2.34L180.69,208H103.31L64,168.69V80H180.69l37.65,37.66A8,8,0,0,0,224,120h16Z"/></svg></span>
+        <span class="row__n">04</span><h3 class="row__t">Engine</h3><p class="row__b"><code>ui tenant-scaffold</code> emits the scroll engine verbatim, sandboxed.</p><span class="row__k">Tenant</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></svg></span>
+        <span class="row__n">05</span><h3 class="row__t">Motion</h3><p class="row__b">GSAP handles line reveals with one shared easing curve.</p><span class="row__k">GSAP</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg></span>
+        <span class="row__n">06</span><h3 class="row__t">Gate</h3><p class="row__b"><code>tenant-lint</code> · <code>taste-lint</code> · <code>a11y-lint</code> · <code>validate-layout</code> — errors block ship.</p><span class="row__k">5/5 pass</span>
+      </li>
+      <li class="row row--sm" data-row>
+        <span class="row__icon" aria-hidden="true"><svg viewBox="0 0 256 256" width="22" height="22" fill="currentColor"><path d="M87.24,52.59a8,8,0,0,0-14.48,0l-64,136a8,8,0,1,0,14.48,6.81L39.9,160h80.2l16.66,35.4a8,8,0,1,0,14.48-6.81ZM47.43,144,80,74.79,112.57,144ZM200,96c-12.76,0-22.73,3.47-29.63,10.32a8,8,0,0,0,11.26,11.36c3.8-3.77,10-5.68,18.37-5.68,13.23,0,24,9,24,20v3.22A42.76,42.76,0,0,0,200,128c-22.06,0-40,16.15-40,36s17.94,36,40,36a42.73,42.73,0,0,0,24-7.25,8,8,0,0,0,16-.75V132C240,112.15,222.06,96,200,96Zm0,88c-13.23,0-24-9-24-20s10.77-20,24-20,24,9,24,20S213.23,184,200,184Z"/></svg></span>
+        <span class="row__n">—</span><h3 class="row__t">Title block</h3><p class="row__b">This page declares its own toolchain, once, right here.</p><span class="row__k">343 WebP frames · Tenant engine, 294 lines · GSAP 3.15 · Be Vietnam Pro, self-hosted</span>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 08 ─ CTA -->
+  <!-- Owner override G: trang không còn phễu pre-order giả cho drone chưa có
+       thật — CTA thật duy nhất của trang là Design:OS, công cụ dựng ra nó. -->
+  <section id="cta" class="cta">
+    <div class="grid">
+      <p class="tag">06 — Try Design:OS</p>
+      <h2 class="head" data-split>Build pages like this.</h2>
+      <p class="lede">This page, and the lint gates it had to pass, ship from one CLI: the <code>ui</code> binary.</p>
+      <div class="cta__install">
+        <code class="cta__cmd">npm install -g ease-design</code>
+        <a class="btn btn--brand" href="https://github.com/jangtrinh/design-os" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="grid foot__grid">
+    <p class="foot__a"><span class="foot__mark">OPAH<span>ONE</span></span> — a demo page for <a href="https://github.com/jangtrinh/design-os" target="_blank" rel="noopener">Design:OS</a>.</p>
+  </div>
+</footer>
+
+<!-- prefers-reduced-motion: mọi hoạt hoạ trên trang có nhánh reduce —
+     scrub-section.css/scrub-type.css/anno.css tắt transition/keyframes qua
+     @media (prefers-reduced-motion: reduce); motion.js tắt GSAP qua
+     gsap.matchMedia({ reduce: '(prefers-reduced-motion: reduce)' }); <style>
+     ở <head> là lưới an toàn toàn trang, cộng thêm chứ không thay. -->
+<!-- Không còn ScrollTrigger — motion.js tự lái timeline bằng
+     IntersectionObserver (xem file đó), tenant-lint không còn gì để quét
+     ngoài code của chính trang. -->
+<script src="lib/gsap.min.js"></script>
+<script src="scrub-section.js"></script>
+<script src="page.js"></script>
+<script src="motion.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+/* ============================================================================
+   sections.css — các khối nội dung tĩnh.
+
+   Quyết định bố cục: KHÔNG có thẻ nổi (card) ở đây. Thông tin xếp thành HÀNG.
+   OWNER OVERRIDE: gạch chỉ 1px từng ngăn các hàng/khối đã bị gỡ (owner thấy
+   xấu) — phân nhóm giờ dựa vào khoảng trắng + trọng lượng chữ. NGOẠI LỆ duy
+   nhất: border-bottom của bảng thông số (.table) — 12 hàng dữ kiện không có
+   gì ngăn cách thì thật sự khó đọc theo hàng ngang, đó là chức năng, không
+   phải trang trí, nên giữ lại (owner đã chốt ngoại lệ này).
+   ========================================================================== */
+
+/* ---- 02 băng tuyên ngôn: mảng màu thương hiệu PHẲNG, chữ đen đè lên -------- */
+.claim {
+  padding: var(--space-7) 0;
+  background: var(--color-brand);
+  color: var(--color-brand-on);
+}
+.claim__line {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-4);
+  font-weight: var(--weight-display);
+  font-size: var(--size-head);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  max-width: 22ch; /* ép gãy ba dòng cứng — không phải giới hạn ngẫu nhiên */
+}
+.claim__foot {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-weight: var(--weight-label);
+  font-size: var(--size-caption);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ---- 03 / 04 / 07 hàng ----------------------------------------------------- */
+.rows, .parts, .specs, .cta { padding: var(--space-8) 0; }
+.parts { background: var(--color-surface-sunk); }
+
+.row-list {
+  width: min(1440px, 100% - clamp(32px, 6vw, 128px));
+  margin: var(--space-5) auto 0;
+  padding: 0;
+  list-style: none;
+}
+.row-list--tight { margin-top: var(--space-4); }
+
+/* Icon là cột ĐẦU của lưới hàng (T-F2) — luôn có mặt để lưới thẳng hàng dọc
+   suốt danh sách, dù rỗng ở hàng không tìm được glyph literal thật (xem báo
+   cáo: đó là chỗ trống giữ layout, không phải icon giả). */
+.row {
+  display: grid;
+  grid-template-columns: 2rem 5rem minmax(0, 5fr) minmax(0, 6fr) 8rem;
+  align-items: start;
+  column-gap: var(--space-3);
+  padding: var(--space-5) 0;
+}
+
+.row__icon { padding-top: 0.2em; color: var(--color-brand-text); }
+.row-list--invert .row__icon { color: var(--color-brand); }
+.row__icon svg { display: block; width: 22px; height: 22px; }
+
+.row__n {
+  font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.16em; color: var(--color-brand-text); padding-top: 0.55em;
+}
+.row-list--invert .row__n { color: var(--color-brand); }
+
+.row__t {
+  margin: 0;
+  font-weight: var(--weight-display);
+  font-size: var(--size-sub); line-height: 1.05; letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.row--sm .row__t { font-size: 1.25rem; }
+
+.row__b { margin: 0; color: var(--color-ink-soft); font-size: var(--size-small); line-height: 1.6; }
+.row-list--invert .row__b { color: var(--color-ink-invert-soft); }
+.row-list--invert .row__b code { color: var(--color-ink-invert); }
+
+.row__k {
+  justify-self: end; text-align: right;
+  font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-ink-soft); padding-top: 0.55em;
+}
+.row-list--invert .row__k { color: var(--color-ink-invert-soft); }
+
+@media (max-width: 860px) {
+  .row { grid-template-columns: 1.5rem 2.25rem minmax(0, 1fr); row-gap: var(--space-1); }
+  .row__b { grid-column: 3; }
+  .row__k { grid-column: 3; justify-self: start; text-align: left; padding-top: 0; }
+}
+
+/* ---- 03 dải số: chữ số cỡ display, phần đơn vị cỡ caption ------------------ */
+.figs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: min(1440px, 100% - clamp(32px, 6vw, 128px));
+  margin: var(--space-6) auto 0;
+}
+.fig { padding: var(--space-3) var(--space-2) 0 0; }
+.fig + .fig { padding-left: var(--space-2); }
+.fig dt {
+  font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-soft);
+}
+.fig dd {
+  margin: var(--space-1) 0 0;
+  font-weight: var(--weight-display);
+  font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; letter-spacing: -0.05em;
+}
+.fig dd i {
+  display: block; margin-top: var(--space-1);
+  font-style: normal; font-weight: var(--weight-label);
+  font-size: var(--size-caption); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--color-brand-text);
+}
+@media (max-width: 860px) {
+  .figs { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- 06 bảng thông số — border-bottom GIỮ LẠI, xem ghi chú đầu file ------- */
+.table {
+  width: min(1440px, 100% - clamp(32px, 6vw, 128px));
+  margin: var(--space-5) auto 0;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  padding: var(--space-2) 0;
+  border-bottom: var(--rule-hair) solid var(--color-rule-soft);
+  text-align: left; vertical-align: baseline;
+}
+.table th {
+  width: 38%; font-weight: var(--weight-label); color: var(--color-ink-soft);
+  font-size: var(--size-caption);
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+.table td { font-size: var(--size-small); }
+
+/* ---- 07 khối tối --------------------------------------------------------- */
+.built {
+  padding: var(--space-8) 0;
+  background: var(--color-surface-ink);
+  color: var(--color-ink-invert);
+}
+
+/* ---- 08 CTA: cài Design:OS, không còn form email giả (owner override G) --- */
+.cta__install {
+  grid-column: 1 / 8;
+  display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap;
+}
+@media (max-width: 860px) { .cta__install { grid-column: 1 / -1; } }
+.cta__cmd {
+  font-weight: var(--weight-label);
+  font-size: var(--size-small);
+  color: var(--color-ink);
+}
+.cta__cmd::before {
+  content: '$ ';
+  color: var(--color-ink-soft);
+}

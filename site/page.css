@@ -1,0 +1,221 @@
+/* ============================================================================
+   page.css — nền, lưới, chữ nguyên thuỷ, nav, nút, chân trang, @font-face.
+   Persona: kinetic-swiss-punk (knowledge/personas/graphic-modernist.md), đã
+   được owner override một phần (xem ghi chú dưới) — KHÔNG bo góc · KHÔNG đổ
+   bóng · KHÔNG gradient · KHÔNG glass/blur · mảng màu thương hiệu để PHẲNG.
+   Mọi giá trị đến từ tokens.css (`ui tokens compile`).
+
+   OWNER OVERRIDE (thắng persona khi xung đột):
+   - Một họ chữ duy nhất (Be Vietnam Pro), đúng ba weight 400/600/800 — không
+     còn family riêng cho display/mono. Giọng "nhãn" (caption/tag/nav/nút) từng
+     do font mono đảm nhiệm giờ chuyển sang weight 600 + uppercase + tracking
+     rộng — tổ hợp đó LÀ giọng đối trọng, không phải chữ mảnh cạnh chữ đậm.
+   - Gạch chỉ 1px trang trí/phân cách hầu hết bị gỡ (owner thấy xấu) — chỉ còn
+     border-bottom của bảng thông số (chức năng: đọc 12 hàng) và viền nút/input
+     (chức năng: hit target). Phân cách còn lại dựa vào khoảng trắng + trọng
+     lượng chữ, không phải đường kẻ nhạt hơn.
+   - Font tự host — file trong site/fonts/, KHÔNG link Google CDN, để trang vẫn
+     chạy offline (xem colophon: trang không giấu runtime dependency nào).
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-ext-600-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-800-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('fonts/be-vietnam-pro-latin-ext-800-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-body);
+  font-size: var(--size-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+/* Không còn family mono riêng — code inline vẫn đậm hơn văn bản thường để
+   tách khỏi prose, nhưng giữ nguyên chữ hoa/thường (đây là tên file/lệnh thật,
+   text-transform:uppercase sẽ làm sai chính tả của nó). */
+code { font-weight: var(--weight-label); font-size: 0.9em; }
+
+/* Lưới 12 cột — cấu trúc đối xứng để nội dung đặt bất đối xứng bên trong nó. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: var(--space-3);
+  width: min(1440px, 100% - clamp(32px, 6vw, 128px));
+  margin-inline: auto;
+}
+@media (max-width: 860px) { .grid { grid-template-columns: repeat(6, 1fr); } }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: absolute; left: var(--space-2); top: -100px; z-index: 100;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-ink); color: var(--color-ink-invert);
+  text-decoration: none; font-weight: var(--weight-label);
+  font-size: var(--size-caption); letter-spacing: 0.14em; text-transform: uppercase;
+}
+.skip:focus-visible { top: var(--space-2); }
+
+:where(a, button, input):focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+/* ---- chữ nguyên thuỷ ------------------------------------------------------ */
+
+/* nhãn — giọng đối trọng giờ là weight-label + hoa + tracking, không phải mono */
+.tag {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-4);
+  font-weight: var(--weight-label);
+  font-size: var(--size-caption);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-brand-text);
+}
+.tag--invert { color: var(--color-brand); }
+.tag--on-brand { color: var(--color-brand-on); }
+
+.head {
+  grid-column: 1 / -1;
+  margin: 0 0 var(--space-5);
+  font-weight: var(--weight-display);
+  font-size: var(--size-head);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+.head--sm { font-size: clamp(2rem, 4.6vw, 3.75rem); }
+
+.lede {
+  grid-column: 1 / 8;
+  margin: 0 0 var(--space-5);
+  font-size: var(--size-lede);
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+  max-width: 54ch;
+}
+.lede--invert { color: var(--color-ink-invert-soft); }
+@media (max-width: 860px) { .lede { grid-column: 1 / -1; } }
+
+/* Link trong prose (lede/colophon/footer) trỏ ra Design:OS — gạch chân đủ để
+   đọc ra là link, không thêm màu thứ ba ngoài bảng màu thương hiệu. */
+.lede a, .foot__a a {
+  color: inherit;
+  text-decoration-color: var(--color-brand-text);
+  text-underline-offset: 0.15em;
+}
+.lede a:hover, .foot__a a:hover { color: var(--color-brand-text); }
+
+/* mặt nạ cắt dòng — GSAP dựng từng dòng dậy từ dưới mặt nạ này (xem motion.js) */
+.line-mask { display: block; overflow: hidden; }
+.line-mask > span { display: block; will-change: transform; }
+
+/* ---- nav ------------------------------------------------------------------ */
+.nav {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) clamp(16px, 3vw, 64px);
+  background: var(--color-surface);
+}
+.nav__mark {
+  font-weight: var(--weight-display);
+  font-size: var(--size-small); letter-spacing: 0.02em;
+  text-transform: uppercase; text-decoration: none; color: var(--color-ink);
+}
+.nav__mark span { color: var(--color-brand-text); }
+.nav__links { display: flex; gap: var(--space-4); }
+.nav__links a {
+  font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--color-ink-soft); text-decoration: none;
+}
+.nav__links a:hover { color: var(--color-ink); }
+@media (max-width: 860px) { .nav__links { display: none; } }
+
+/* ---- nút: một đặc, một viền — cặp CTA theo brand/design/soul.md -----------
+   Viền nút GIỮ NGUYÊN (owner override chỉ gỡ gạch trang trí/phân cách, không
+   gỡ viền chức năng của control — nút cần viền để đọc được hit target). */
+.btn {
+  display: inline-flex; align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border: var(--rule-hair) solid var(--color-ink);
+  border-radius: var(--radius-none);
+  font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer;
+  transition: background var(--motion-fast) linear, color var(--motion-fast) linear;
+}
+.btn--brand { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-brand-on); }
+.btn--brand:hover { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-ink-invert); }
+.btn--ghost { background: transparent; color: var(--color-ink); }
+.btn--ghost:hover { background: var(--color-ink); color: var(--color-ink-invert); }
+
+/* ---- chân trang: một dòng duy nhất (spine §0.4 — trang chỉ tự nói ở 2 chỗ) - */
+.foot { padding: var(--space-5) 0; }
+.foot__grid { row-gap: var(--space-2); }
+.foot p { margin: 0; font-weight: var(--weight-label); font-size: var(--size-caption);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-soft); }
+.foot__a { grid-column: 1 / -1; }
+.foot__mark { font-weight: var(--weight-display); color: var(--color-ink); }
+.foot__mark span { color: var(--color-brand-text); }
