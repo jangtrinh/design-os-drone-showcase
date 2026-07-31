@@ -158,6 +158,57 @@
   }
 }
 
+/* ============================================================================
+   M1 (MOBILE-SPEC §3) — GHIM THẬT trên mobile, ghi đè biến thể non-pinned của
+   scaffold (`scrub-section.css:174-201`, KHÔNG được sửa trực tiếp file đó —
+   Tenant kernel output nguyên văn). File này nạp SAU nên thắng cascade; đây là
+   nơi override đúng chỗ, không phải phân nhánh khỏi kernel.
+
+   Vì sao scaffold tắt ghim ở đây: pin đấu với touch momentum (UC-04) — nhưng
+   hệ quả đo được (scratchpad/diagnose-mobile.mjs) là phim TRÔI KHỎI MÀN HÌNH
+   thay vì đứng yên (stageTop giữa cảnh tới -1201px), tức là "sửa cho cảm ứng"
+   biến thành "vỡ luôn cảm giác scrub". Khôi phục hợp đồng ghim y hệt desktop,
+   chỉ khác đơn vị chiều cao (xem lý do dùng svh ngay dưới).
+
+   `svh` (KHÔNG `dvh`) trên mobile: `dvh` đổi mỗi lần thanh URL trình duyệt
+   ẩn/hiện — chiều cao section đổi giữa lúc cuộn làm `travel` đổi theo, tiến độ
+   nhảy và điểm ghim giật. `svh` là chiều cao NHỎ NHẤT, không đổi suốt phiên
+   cuộn: đổi lấy một dải trống khi thanh URL thu lại, để được scrub không giật.
+   Desktop vẫn giữ `dvh` (không sửa gì ở khối `.scrub__stage` desktop). */
+@media (max-width: 860px) {
+  .scrub--film .scrub__stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    aspect-ratio: auto; /* huỷ 4:5 tĩnh của scaffold — pin thật không cần khung cố định */
+  }
+  .scrub--film .scrub__story { margin-top: -100svh; }
+  .scrub--film .scrub__chapter { min-height: 100svh; }
+  .scrub--film .scrub__chapter-pin {
+    position: sticky;
+    top: 0;
+    min-height: 100svh;
+  }
+  /* Trả lại trạng thái nghỉ như desktop: ẩn tới khi `.is-active` — scaffold
+     mobile ép opacity:1/transform:none vì bản của nó không ghim nên không có
+     khái niệm "beat đang active"; giờ có ghim thật, chữ phải theo đúng nhịp
+     is-active như desktop, không hiện sẵn toàn bộ nữa. */
+  .scrub--film .scrub__copy { opacity: 0; }
+  .scrub--film .scrub__chapter.is-active .scrub__copy { opacity: 1; }
+}
+
+/* M6 (MOBILE-SPEC §3) — reduced-motion GIỮ NGUYÊN biến thể non-pinned của
+   scaffold làm layout của nó, không xoá đi: đó chính là bố cục đúng cho người
+   tắt chuyển động — đọc hết nội dung, không ghim, không scrub. Khối này nạp
+   SAU khối ghim thật ở trên nên thắng khi cả hai điều kiện cùng đúng. */
+@media (max-width: 860px) and (prefers-reduced-motion: reduce) {
+  .scrub--film .scrub__stage { position: relative; height: auto; aspect-ratio: 4 / 5; }
+  .scrub--film .scrub__story { margin-top: 0; }
+  .scrub--film .scrub__chapter { min-height: auto; }
+  .scrub--film .scrub__chapter-pin { position: relative; min-height: auto; }
+  .scrub--film .scrub__copy { opacity: 1; }
+}
+
 /* ---- fallback đặc bắt buộc: người dùng xin tương phản cao hơn ------------- */
 @media (prefers-contrast: more) {
   .scrub--film .scrub__title {

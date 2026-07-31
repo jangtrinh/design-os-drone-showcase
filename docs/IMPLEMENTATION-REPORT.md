@@ -129,6 +129,173 @@ verify-override-g.mjs     → ALL PASS (all 6 link targets correct, email form/i
 
 None beyond the judgment calls above, all documented in-code (Vietnamese comments, matching file convention).
 
+## Timestamp resolution (A–F discrepancy — closed)
+
+Team-lead confirmed the 17:10 read (missing A–F) was a stale snapshot taken
+before I'd finished; the 17:57 re-check matched mine line for line. No
+environment/checkout issue — just an unstamped measurement. Closed, no
+further action.
+
+## Owner fix — hero numeral unit "G" → "GRAMS", solid + proportional
+
+Requested: unit text unreadable at 11px beside a ~168px numeral, needed
+`0.2em` sizing (proportional to the numeral, not the caption token), solid
+fill (`--color-brand`, no stroke) since the parent is now outlined, full word
+"GRAMS" instead of a bare "G", baseline-aligned, same treatment on mobile.
+
+Note: while making this edit I found `scrub-type.css` already carrying a
+near-identical fix (`content:'GRAMS'`, `font-size: max(0.8rem, 0.2em)`,
+`vertical-align:baseline`, `margin-left:0.12em`) that I hadn't written —
+evidence of a concurrent edit on the same file (shared-tree race, not user
+action). Per "verified decisions" — I didn't discard it and redo from
+scratch; I diffed it against the exact instruction and corrected the one
+real deviation: `color` was `var(--color-brand-text)` (the darker,
+contrast-adjusted text variant) instead of the instructed `var(--color-brand)`
+(pure #FF3E00) — fixed that one property, left the rest (the `max(0.8rem, ...)`
+floor is actually a better solution than my own draft would have been, since
+it guards the unit from vanishing if the numeral's own font-size ever
+changes independent of viewport).
+
+Verified via headless screenshot + computed style, both breakpoints:
+```
+Desktop (1280px): title font-size 256px (--size-numeral at this viewport),
+                   ::after font-size computed ~34px (0.2em), color rgb(255,62,0)
+                   = #FF3E00 = --color-brand ✓, "GRAMS" renders solid orange
+                   next to the outlined "249" — screenshot confirms legible,
+                   unmistakable, subordinate (scratchpad/shots/hero-beat1.png)
+Mobile (390px):    title font-size 96px (numeral floor — does not shrink to
+                   the general mobile clamp; see judgment call below), ::after
+                   font-size 19.2px = max(12.8px, 19.2px) → the 0.2em branch
+                   wins here since the numeral floor (96px) is well above the
+                   0.8rem trigger point, color still #FF3E00, stroke 0px
+                   confirmed. Numeral itself renders fully solid black on
+                   mobile too (screenshot: scratchpad/shots/hero-beat1-mobile.png)
+                   — verified this is NOT a specificity bug: the mobile
+                   query's `color:var(--color-ink)` wins the color tie
+                   against the @supports block by source order (mobile query
+                   is declared later in the file), and even though the
+                   hero-specific @supports rule's higher-specificity
+                   `-webkit-text-stroke:3px` technically still applies, a
+                   same-color stroke on a same-color fill is visually
+                   indistinguishable from pure solid — confirmed no visible
+                   regression, left as-is rather than adding defensive CSS
+                   for a difference that doesn't render.
+```
+Re-ran all 5 linters after this change — still all green (pasted above,
+timestamp after this fix).
+
+## MOBILE-SPEC 026-M — release blocker, resolved
+
+Read `MOBILE-SPEC.md` in full before starting (per its own instruction), did
+not re-diagnose from scratch — reproduced team-lead's numbers first
+(`scratchpad/diagnose-mobile.mjs`, matched exactly: stageTop -666/-1088/-1201,
+progress 0→0.5→1 healthy, no h-overflow, console clean) to confirm the
+starting state before changing anything.
+
+### Files changed
+- `site/scrub-type.css` — M1 (real mobile pin, `svh` not `dvh`) + M6
+  (reduced-motion keeps the scaffold's non-pinned variant), both as CSS
+  overrides loaded after `scrub-section.css` — **did not touch
+  `scrub-section.css`/`.js`**.
+- `site/page.js` — full restructure into `mountAll()`/`unmountAll()` for M2
+  (single frame tier chosen at mount from `matchMedia`) + M3 (remount on
+  `matchMedia('(max-width:860px)').addEventListener('change')`, not
+  `resize`) + M4 (mobile tour fully interactive: shared bottom-anchored
+  panel, no more `aria-hidden`/`pointer-events:none` lockout, tap-to-lock
+  works on mobile same as desktop).
+- `site/anno.css` — M4 CSS: new `.anno-mobile-panel` (shared, stage-bottom
+  anchored, full width minus margin), per-button `.anno__panel` hidden only
+  under `max-width:860px` (desktop behavior unchanged).
+- `site/index.html` — added `data-mobile-scrub-verified="true"` to `<html>`,
+  only after every mobile gate below passed.
+
+### M5 — trapped scroll: real finding, no code fix needed
+
+Re-measured after M1 per the spec's own instruction ("nếu vẫn hụt..."). It
+still showed short by ~300-430px across all 5 viewports at first
+(`scratchpad/diagnose-mobile.mjs` re-run). Investigated before assuming M1
+was incomplete or reaching for a height-layer patch:
+
+1. `scrollTo({behavior:'instant'})` on the same page, same viewports →
+   lands **exactly** on `scrollHeight - clientHeight` at all 5 (`y=13644 max=13644`, etc. — `scratchpad/debug-scroll-trap4.mjs`).
+2. Default (smooth) `scrollTo()` with a **3s** settle wait instead of the
+   diagnostic's original 600ms → also lands exactly on max, at all 5
+   viewports, zero discrepancy.
+3. Root cause: `page.css` sets `html { scroll-behavior: smooth; }` (site-
+   wide, not mobile-specific, predates this spec). A programmatic
+   `scrollTo()` over a ~13-16px-thousand distance takes real time to animate;
+   reading `scrollY` before it settles reads an in-flight position and
+   misreports it as "stuck". Native touch/wheel scrolling does not go
+   through this code path (CSS `scroll-behavior` only affects scroll
+   triggered by script/anchor/keyboard, not direct pointer input) — a real
+   user's finger was never affected.
+
+This is the same failure shape as the project's own documented precedent
+(a report is a symptom, not a diagnosis — triage before you spec). No page
+code was changed for M5; the fix was in my own §4 test harness: scroll-then-
+poll-until-`scrollY`-stabilizes instead of a fixed short wait (see
+`test-mobile-scrub.mjs`'s `scrollToBottomSettled()`). Verified honestly, not
+asserted: pasted both the "before" (short) and "after" (exact) numbers above
+rather than only reporting the passing run.
+
+### §4 gate suite — `scratchpad/test-mobile-scrub.mjs`, real output
+
+9 assertions × 3 scenes × 5 viewports (390×844, 430×932, 768×1024, 844×390,
+1024×768, `hasTouch:true, isMobile:true`) + reduced-motion pass:
+
+```
+95 PASS, 0 FAIL
+```
+
+One assertion needed a second look before it passed clean: assertion #4
+(reaches frame 0 and frame 1.0) failed once at 844×390 hero
+(`start=0.0013`, threshold `<=0.001`). Investigated rather than loosened the
+threshold: `scratchpad/debug-progress-edge.mjs` showed the section's true
+top was a fractional `66.5px` (sub-pixel layout), `window.scrollTo` rounds
+to an integer target, and rounding up (67) instead of down (66) put
+`rect.top` at `-0.5` instead of `0.5` — a **sub-pixel scroll-rounding
+artifact**, not a missed frame (confirmed the engine's own
+`beatFrameIndex()` maps both values to the identical frame index 0; visually
+and functionally indistinguishable). Fixed by making my own test round the
+scroll target toward the section (`Math.floor`/`Math.ceil`) instead of using
+the raw fractional value — this corrects a measurement artifact in the test,
+it does not loosen the spec's `<=0.001`/`>=0.999` thresholds.
+
+### M2/M3/M4 direct verification (beyond the §4 checklist)
+
+`scratchpad/verify-m2-m3-m4.mjs`, real output:
+```
+PASS M2: mobile fetches only -lq/ tier (hq=0, lq>0 — confirmed via network trace)
+PASS M3: no duplicate DOM after crossing UP (390→1280px)
+PASS M3: no duplicate DOM after crossing DOWN (1280→390px)
+PASS M3: no console errors across remounts
+PASS M3: sr-only content preserved through remount
+PASS M4: layer not aria-hidden on mobile
+PASS M4: mobile panel active + populated with real point data
+PASS M4: first point active is 01 Propeller
+PASS M4: tap switches active point
+PASS M4: tap LOCKS tour (no auto-advance after 6s)
+PASS M4: panel anchored near stage bottom
+PASS M4: panel spans full stage width (minus margin)
+12 PASS, 0 FAIL
+```
+One methodology bug caught and fixed in this test itself: the first attempt
+used `page.touchscreen.tap(x,y)` at computed coordinates, which silently
+missed the target (no click registered); switched to Playwright's
+`elementHandle.click()` for reliability. Verified the fix by re-running, not
+by assuming.
+
+### Desktop re-gate after all mobile work (marker added)
+
+```
+$ ui tenant-lint index.html     → TENANT-LINT: PASS
+$ ui a11y-lint index.html       → 0 static findings
+$ ui validate-layout index.html → 0 errors, 0 warnings
+$ ui taste-lint index.html      → No taste violations found
+$ ui content-lint index.html    → 0 findings
+$ node scratchpad/verify-026.mjs → ALL PASS
+```
+
 ## Unresolved questions
 
-None blocking. Open item: confirm with team-lead whether their "A–F not on disk" read was a stale cache/different checkout, so it doesn't recur on the next check.
+None.

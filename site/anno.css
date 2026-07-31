@@ -157,10 +157,35 @@
   animation-play-state: paused;
 }
 
-/* ---- MOBILE (<860px): chỉ chấm, trang trí, không tour --------------------- */
+/* ---- panel dùng CHUNG cho mobile (M4, MOBILE-SPEC §3) ---------------------
+   Khung hẹp không đủ chỗ cho panel bám sát từng chấm như desktop — sẽ tràn ra
+   ngoài. Thay bằng MỘT khối neo đáy `.scrub__stage`, rộng hết bề ngang trừ lề,
+   chỉ nội dung điểm đang active được page.js đổ vào. Ẩn hẳn trên desktop
+   (chỉ hiện trong khối @media dưới) — desktop vẫn dùng panel bám-chấm cũ. */
+.anno-mobile-panel {
+  display: none;
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: var(--space-2);
+  z-index: 3; /* trên .anno (2) — không phải con của nó nên cần khai lại */
+  background: var(--color-ink);
+  border-radius: var(--radius-none);
+  padding: var(--space-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
+}
+.anno-mobile-panel.is-active { opacity: 1; pointer-events: auto; }
+
+/* ---- MOBILE (<860px): tương tác đầy đủ như desktop, khác GIAO DIỆN panel -
+   Trước đây `pointer-events: none` + `aria-hidden` khoá hẳn tương tác — đó
+   chính là "tắt trải nghiệm" owner bắt lỗi (MOBILE-SPEC M4). Chấm vẫn nhận
+   chạm/focus bình thường (không override pointer-events ở đây nữa); panel
+   bám-chấm ẩn đi, nhường chỗ cho `.anno-mobile-panel` neo đáy ở trên. */
 @media (max-width: 860px) {
-  .anno__pt { pointer-events: none; }
-  .anno__panel { display: none; }
+  .anno__pt .anno__panel { display: none; }
+  .anno-mobile-panel { display: block; }
 }
 
 /* ---- REDUCED: không timer, không ping, không meter ------------------------ */
@@ -169,5 +194,6 @@
   .anno__dot { transition: none; }
   .anno__ping { display: none; }
   .anno__panel { transition: none; }
+  .anno-mobile-panel { transition: none; }
   .anno__meter, .anno__meter.is-running { animation: none; }
 }
