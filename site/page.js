@@ -103,6 +103,32 @@
         '</div>' +
       '</div>';
     heroStage.appendChild(fold);
+
+    // Dải fold mờ dần theo --scrub-progress (hero-fold.css). Nhưng `visibility`
+    // không nội suy được từ một biến số, mà hai CTA trong đó là LINK THẬT —
+    // để mờ không thôi thì bàn phím vẫn tab vào một thứ vô hình. Cầu dao phải
+    // là JS, và nó thuộc về đây vì page.js là nơi dựng ra .fold.
+    // Bám ticker CHUNG của engine, không tạo vòng rAF riêng.
+    var wasPast = null;
+    var readFoldGate = function () {
+      // heroEl, KHÔNG phải biến ngoài: engine bọc mỗi subscriber trong try/catch
+      // ("one bad subscriber must not kill the ticker"), nên một ReferenceError
+      // ở đây sẽ chết IM LẶNG và cửa mãi mãi không mở.
+      var p = parseFloat(getComputedStyle(heroEl).getPropertyValue('--scrub-progress')) || 0;
+      var past = p > 0.44;
+      if (past !== wasPast) { // chỉ ghi DOM khi ĐỔI trạng thái, không mỗi frame
+        wasPast = past;
+        fold.setAttribute('data-past-intro', past ? 'true' : 'false');
+      }
+    };
+    // Ticker CHUNG do engine tạo ở lần mount ĐẦU TIÊN. Nếu hàm này chạy trước
+    // đó thì `window.__scrubTicker` còn undefined và việc đăng ký im lặng biến
+    // mất — chờ tới khi nó có rồi mới bám, thay vì chụp một lần rồi thôi.
+    (function attach() {
+      var t = window.__scrubTicker;
+      if (t) t.add(readFoldGate);
+      else window.requestAnimationFrame(attach);
+    })();
   }
 
   // --- TOUR ANNOTATION: cảnh nổ tung, hiện ở frame cuối ----------------------
@@ -217,6 +243,14 @@
         restartMeterEl(meters[idx]);
         restartMeterEl(mobilePanel.querySelector('.anno__meter'));
       }
+      // Tính lại clamp NGAY LÚC HIỆN, không dựa vào lần tính ở mount/resize —
+      // .scrub__stage là position:sticky nên rect.top của nó chỉ đúng nghĩa
+      // (0, hoặc chạm mép nav) khi section ĐANG ở trong đoạn cuộn bị ghim;
+      // ở mount (chưa cuộn tới), rect.top là vị trí tài liệu bình thường (một
+      // số nghìn px), khiến so sánh với mép nav sai hoàn toàn — đây chính là
+      // lý do panel 04 (Vỏ trên) vẫn chui dưới nav dù đã thêm topLimit
+      // (Fable fix #3): topLimit tính đúng công thức nhưng tính SAI THỜI ĐIỂM.
+      clampPanels();
     }
 
     function scheduleAdvance() {
@@ -261,7 +295,26 @@
       if (mobileMQ.matches) return;
       var stageRect = anatomyStage.getBoundingClientRect();
       if (!stageRect.width) return;
+      // .scrub__stage chỉ có nghĩa hình học đúng khi THẬT SỰ đang ghim
+      // (rect.top ~ 0) — bây giờ clampPanels() còn được gọi từ setActive()
+      // (Fable fix #3 cần geometry MỚI mỗi lần mở panel, không phải giá trị
+      // tính từ lúc mount), nên có thể bị gọi đúng lúc section đang cuộn
+      // NGANG QUA (chưa ghim, hoặc vừa nhả), khi rect.top là một số bất kỳ
+      // (âm hoặc dương lớn) không phản ánh vị trí thật trên màn hình — clamp
+      // theo số đó cho ra nudge vô nghĩa (đã bắt được: 454px). Bỏ qua lần gọi
+      // đó, giữ nudge hiện tại; lần gọi kế (resize, hoặc setActive kế tiếp
+      // khi đã ghim thật) sẽ tính lại đúng.
+      if (Math.abs(stageRect.top) > 2) return;
       var margin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--space-2')) || 16;
+      // Fable fix: điểm vỏ trên (y 17.5%) mở panel LÊN TRÊN, và ở gần đỉnh
+      // stage panel đó chui xuống dưới .nav sticky (panel + nav đều z-index
+      // riêng, panel không tự biết nav chiếm mất phần trên cùng màn hình).
+      // Trần trên hiệu lực là mép DƯỚI của nav, không phải mép trên của
+      // stage, nếu nav đang che một phần stage (luôn đúng vì cả hai đều
+      // sticky top:0 và nav nạp trước nên đứng trên).
+      var nav = document.querySelector('.nav');
+      var navBottom = nav ? nav.getBoundingClientRect().bottom : stageRect.top;
+      var topLimit = Math.max(stageRect.top, navBottom);
       buttons.forEach(function (btn, i) {
         btn.style.setProperty('--nudge-x', '0px');
         btn.style.setProperty('--nudge-y', '0px');
@@ -269,7 +322,7 @@
         var dx = 0, dy = 0;
         if (r.left < stageRect.left + margin) dx = (stageRect.left + margin) - r.left;
         else if (r.right > stageRect.right - margin) dx = (stageRect.right - margin) - r.right;
-        if (r.top < stageRect.top + margin) dy = (stageRect.top + margin) - r.top;
+        if (r.top < topLimit + margin) dy = (topLimit + margin) - r.top;
         else if (r.bottom > stageRect.bottom - margin) dy = (stageRect.bottom - margin) - r.bottom;
         if (dx) btn.style.setProperty('--nudge-x', dx + 'px');
         if (dy) btn.style.setProperty('--nudge-y', dy + 'px');
@@ -299,6 +352,12 @@
         buttons.forEach(function (b) {
           b.classList.remove('is-active');
           b.setAttribute('aria-expanded', 'false');
+          // Phòng hờ: xoá neo panel cũ — nếu lần clampPanels() gần nhất lỡ
+          // chạy đúng lúc section đang rời khỏi vị trí ghim (geometry nhất
+          // thời sai), --nudge-* có thể mang giá trị vô nghĩa; xoá ở đây đảm
+          // bảo lượt tour SAU luôn bắt đầu từ 0px, không kế thừa lỗi cũ.
+          b.style.setProperty('--nudge-x', '0px');
+          b.style.setProperty('--nudge-y', '0px');
         });
         mobilePanel.classList.remove('is-active');
         mobilePanel.innerHTML = '';

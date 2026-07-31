@@ -66,7 +66,14 @@
 .scrub--film .scrub__title {
   margin: 0;
   font-weight: var(--weight-display);
-  font-size: var(--size-display);
+  /* Fable audit blocker: title 3 dòng (hero beat 2) xuống 4 dòng ở 1280/1440,
+     và ngay cả khi KHÔNG xuống dòng (1920) khối chữ vẫn cao hơn stage, đè lên
+     nav/fold. Hai lỗi khác trục — ép theo bề NGANG (vw) mới chỉ chữa lỗi 1.
+     min() thêm nhánh `vh`: khi khối nhiều dòng làm chữ cao vượt khung, nhánh
+     này thắng thay vì --size-display/vw, ép chữ nhỏ lại theo chiều CAO thay
+     vì chiều rộng — chữa đúng lỗi 2. --size-numeral (hero beat 1) không đụng
+     tới vì rule riêng của nó specificity cao hơn, ghi đè font-size ở đây. */
+  font-size: min(var(--size-display), 9.5vw, 19vh);
   line-height: 0.86;
   letter-spacing: -0.055em;
   text-transform: uppercase;
@@ -79,8 +86,10 @@
 }
 .scrub--film .scrub__chapter.is-active .scrub__title { clip-path: inset(0 0 0 0); }
 
-/* Cảnh tháo rời trải hết bề ngang khung nên chữ nhỏ hơn một nấc. */
-.scrub--anatomy .scrub__title { font-size: var(--size-head); }
+/* Cảnh tháo rời trải hết bề ngang khung nên chữ nhỏ hơn một nấc. Cùng trần
+   vh như rule gốc — anatomy có beat 2 dòng, cùng rủi ro tràn stage theo
+   chiều cao nếu bỏ trần này. */
+.scrub--anatomy .scrub__title { font-size: min(var(--size-head), 9.5vw, 19vh); }
 
 /* Hero beat 1 — động tác chữ ký chính (spine §0.1): "249" bắn ĐÚNG MỘT LẦN ở
    cỡ viewport. Token size riêng cho một mình nó vì lớn hơn hẳn --size-display

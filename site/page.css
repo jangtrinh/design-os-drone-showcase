@@ -88,7 +88,11 @@ img { max-width: 100%; height: auto; display: block; }
 /* Không còn family mono riêng — code inline vẫn đậm hơn văn bản thường để
    tách khỏi prose, nhưng giữ nguyên chữ hoa/thường (đây là tên file/lệnh thật,
    text-transform:uppercase sẽ làm sai chính tả của nó). */
-code { font-weight: var(--weight-label); font-size: 0.9em; }
+/* font-family:inherit bắt buộc — --font-mono đã xoá, không có nó thì <code>
+   rơi về Courier mặc định của UA: một họ chữ thứ hai lẻn vào ngoài ý muốn,
+   phá đúng luật "một họ chữ duy nhất" (owner override D). Weight 600 đã đủ
+   tách <code> khỏi prose thường, không cần family riêng. */
+code { font-family: inherit; font-weight: var(--weight-label); font-size: 0.9em; }
 
 /* Lưới 12 cột — cấu trúc đối xứng để nội dung đặt bất đối xứng bên trong nó. */
 .grid {
@@ -204,7 +208,9 @@ code { font-weight: var(--weight-label); font-size: 0.9em; }
   font-weight: var(--weight-label); font-size: var(--size-caption);
   letter-spacing: 0.16em; text-transform: uppercase;
   text-decoration: none; cursor: pointer;
-  transition: background var(--motion-fast) linear, color var(--motion-fast) linear;
+  /* linear cấm trên transition UI (rubric) — chỉ đồng hồ đếm dwell của
+     annotation (.anno__meter, một phép đo thời gian thật) được miễn. */
+  transition: background var(--motion-fast) cubic-bezier(0.16, 1, 0.3, 1), color var(--motion-fast) cubic-bezier(0.16, 1, 0.3, 1);
 }
 .btn--brand { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-brand-on); }
 .btn--brand:hover { background: var(--color-ink); border-color: var(--color-ink); color: var(--color-ink-invert); }

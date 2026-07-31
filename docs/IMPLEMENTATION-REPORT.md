@@ -296,6 +296,114 @@ $ ui content-lint index.html    → 0 findings
 $ node scratchpad/verify-026.mjs → ALL PASS
 ```
 
+## Fable stage-5 audit — SHIP WITH FIXES, 1 blocker + 4 cheap fixes
+
+Reproduced the blocker myself first (`scratchpad/verify-blocker.mjs`, team-lead's own script) before touching
+anything — matched exactly: 4-line wrap at 1280/1440, stage-overflow + fold-collision at multiple viewports.
+
+### Fix 1 (blocker) — `scrub-type.css`, dual-axis title cap
+
+`font-size: min(var(--size-display), 9.5vw, 19vh)` on `.scrub--film .scrub__title` (and the matching
+`min(var(--size-head), 9.5vw, 19vh)` on `.scrub--anatomy .scrub__title`, same risk for its 2-line beats).
+`--size-numeral` (hero beat 1) untouched — its own selector has higher specificity and still wins.
+
+**Verified, not assumed** (`verify-blocker.mjs`, before/after):
+```
+BEFORE: 1280×800 fs=141 lines=4  TRÀN STAGE + ĐÈ FOLD  (@0.55, @0.75)
+        1440×900 fs=158 lines=4  TRÀN STAGE + ĐÈ FOLD  (@0.55, @0.75)
+        1920×1080 fs=168 lines=3 TRÀN STAGE + ĐÈ FOLD  (@0.55) / ĐÈ FOLD (@0.75)
+AFTER:  1280×800 fs=122 lines=3  (wrap fixed at every viewport, every fraction)
+        1440×900 fs=137 lines=3
+        1920×1080 fs=168 lines=3 (already 3 lines pre-fix, size unchanged since 9.5vw/19vh don't bind here)
+```
+Wrap defect: **100% fixed**, all viewports, all fractions.
+
+Height/fold-collision defect: **reduced but not eliminated at beat-edge fractions (@0.55, @0.75)** — reporting
+this honestly per the instruction ("say so rather than nudging numbers until one screenshot looks clean").
+Root-caused with real geometry (`scratchpad/debug-hero-geometry.mjs`), not assumed:
+```
+frac 0.55: chapter[i=1].chapterRect.top = 360   (chapter needs to reach top=0 to be truly pinned/centered)
+frac 0.75: chapter[i=1].chapterRect.top = 200
+frac 0.95: chapter[i=1].chapterRect.top = 40    (still not 0 — travel=800px total, top decreases
+                                                  linearly with scroll, reaches exactly 0 only at frac→1.0)
+```
+Each `.scrub__chapter`/`.scrub__chapter-pin` has `min-height:100dvh` — identical to the viewport, which gives
+`position:sticky` **zero native travel range**. The last chapter in a section only reaches its fully-"stuck"
+(visually centered) position at the very end of the section's total scroll range; before that, the whole
+chapter (and the title centered inside its flex pin) is still in normal document flow, continuously sliding
+upward with scroll rather than held in place. A smaller font (Fix 1) shrinks the block that's sliding through,
+which measurably reduces how much of it protrudes past the stage/into the fold at any given slide position,
+but doesn't stop the slide itself — that would require giving the chapter more height than the viewport
+(real sticky travel room), which changes `.scrub__chapter`'s height contract. That's set by `scrub-section.css`
+(`min-height:100dvh`, base rule) — off-limits to edit directly, and overriding it from my own stylesheet would
+change the total scroll length/pacing of every multi-beat scrub scene (hero, anatomy, modes) on both desktop
+and mobile, which is a materially bigger, riskier change than "cap a font size" and not what was asked. Naming
+the boundary rather than chasing it, as invited.
+
+### Fix 2 — `page.css`, accidental second typeface
+
+`code { font-family: inherit; ... }` — one line. `--font-mono` was deleted (owner override D) but nothing gave
+`<code>`/`.cta__cmd` a family, so they fell back to the UA's Courier, silently breaking the one-typeface rule.
+`.cta__cmd` has no own `font-family`, confirmed it inherits the fix.
+
+### Fix 3 — `page.js`, panel clamp vs. sticky nav (+ a regression I caught before reporting done)
+
+Changed `clampPanels()`'s top boundary from `stageRect.top` to `Math.max(stageRect.top, navBottom)` so an
+"up"-side panel (top-shell dot, y=17.5%) can't slide under the sticky nav.
+
+First attempt didn't work — verified with `scratchpad/verify-fix3-nav-clamp.mjs` before trusting it: panel
+still landed at `top=24.5` against `navBottom=66.5`. Root cause: `clampPanels()` was only ever called at mount
+and on resize; at **mount** the sticky `.scrub__stage` is nowhere near its pinned position (`stageRect.top`
+is its normal-flow document position, thousands of px down the page), so the nav-relative comparison was
+computed against meaningless geometry and then never recomputed. Fixed by calling `clampPanels()` fresh from
+inside `setActive()` (i.e., every time a panel is about to be shown) — confirmed fix: `panelTop=82.5` exactly
+matches `navBottom(66.5) + margin(16)`.
+
+That fix then caused a **real regression**, caught by re-running the full suite rather than trusting the
+single targeted test: `verify-026.mjs`'s "no panel overflows .scrub__stage" failed (`nudge-y: 454px`, panel
+pushed off the bottom of the stage). Root cause: calling `clampPanels()` from `setActive()` means it can now
+fire while the section is transiently scrolling through (not actually pinned yet, `stageRect.top` far from 0),
+computing a nonsense nudge from bogus geometry, which then persisted as inline style with nothing to ever
+clear it. Fixed two ways: (1) `clampPanels()` now no-ops unless `Math.abs(stageRect.top) <= 2` (i.e., only
+recomputes when the stage is actually in its pinned position — meaningless geometry is skipped rather than
+applied), (2) the tour's RESET path now explicitly zeroes `--nudge-x`/`--nudge-y` on every button, so a stale
+bad value from any edge case can't survive into the next tour. Re-verified all of: `verify-fix3-nav-clamp.mjs`
+(still passes), `verify-026.mjs` (panel overflow false again), `verify-m2-m3-m4.mjs` (12/12), full mobile suite
+(95/95) — pasted below.
+
+### Fix 4 — `index.html`, colophon row 06
+
+Added `content-lint` to the Gate row's body (`tenant-lint · taste-lint · a11y-lint · validate-layout ·
+content-lint`) — the row claimed "5/5 pass" while only naming 4. Still under the F1 14-word cap (8 words now).
+
+### Fix 5 — `page.css`, `.btn` transition easing
+
+`linear` → `cubic-bezier(0.16, 1, 0.3, 1)` (the shared curve) on both `background`/`color` transitions.
+`.anno__meter`'s `linear` (the declared dwell-clock exception) and the `visibility 0s linear` no-op transitions
+in `anno.css` (zero duration, nothing to interpolate, harmless) left untouched — confirmed via grep that no
+other `linear` easing exists in authored CSS besides those two exceptions.
+
+### Full re-verification after all 5 fixes (real output, this run)
+
+```
+$ ui tenant-lint index.html     → TENANT-LINT: PASS
+$ ui a11y-lint index.html       → 0 static findings
+$ ui validate-layout index.html → 0 errors, 0 warnings
+$ ui taste-lint index.html      → No taste violations found
+$ ui content-lint index.html    → 0 findings
+$ node scratchpad/verify-026.mjs        → ALL PASS
+$ node scratchpad/verify-fix3-nav-clamp.mjs → PASS: panel clears nav
+$ node scratchpad/verify-m2-m3-m4.mjs   → 12 PASS, 0 FAIL
+$ node scratchpad/test-mobile-scrub.mjs → 95 PASS, 0 FAIL (fix 1 touches film-title
+                                            sizing; mobile has its own separate
+                                            clamp() breakpoint override untouched by
+                                            the min()/vh change, confirmed unaffected)
+```
+
 ## Unresolved questions
 
-None.
+1. Fix 1's residual: is the beat-edge slide-through collision (hero beat 2, and structurally identical for any
+   last-beat-of-a-multi-beat-scene) acceptable as an inherent characteristic of the current sticky-chapter
+   contract (`min-height:100dvh` in `scrub-section.css`, not owned), or does the owner want the chapter-height
+   contract itself revisited (a materially larger change touching scroll pacing across all three scrub scenes,
+   both desktop and mobile)?

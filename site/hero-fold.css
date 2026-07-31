@@ -25,6 +25,44 @@
   bottom: 0;
   z-index: 2; /* trên canvas/poster (không z-index), dưới .scrub__story (3) */
   padding-bottom: clamp(20px, 3.4vh, 40px);
+
+  /* Dải này là đồ đạc của MÀN MỞ, không phải của cả cảnh. Nó đứng nguyên suốt
+     scene nên câu chữ của beat 2 trượt qua và đâm vào nó — đo được ở 1920x1080:
+     title[593,1026] chồng lên fold. Cho nó rút lui khi cảnh rời beat 1.
+
+     Lái bằng `--scrub-progress` engine ghi sẵn trên thẻ section — cùng cơ chế
+     lớp annotation đang dùng, nên không thêm chủ sở hữu mới và không cần JS.
+     Beat 2 bắt đầu ở 0.5; tắt xong trước đó (0.34 -> 0.44) để chữ tới nơi thì
+     chỗ đã trống.
+
+     `visibility` chứ không chỉ `opacity`: hai CTA này là link THẬT, để mờ
+     không thôi thì bàn phím vẫn tab vào được một thứ vô hình. Không mất gì —
+     "GET DESIGN:OS" nằm thường trực ở nav, bản đầy đủ ở #cta, và mọi con số
+     trong hàng đọc đều có trong bảng thông số. */
+  opacity: clamp(0, calc((0.44 - var(--scrub-progress, 0)) * 10), 1);
+  visibility: visible;
+  transition: opacity var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Ngưỡng ẩn hẳn khỏi thứ tự tab. Dùng chính biến tiến độ qua một truy vấn
+   container-less: khi opacity đã về 0 thì phần tử không còn nhận con trỏ. */
+.fold[data-past-intro='true'] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* transition:none thôi chưa đủ — công thức calc() gốc vẫn tạo một dải mờ
+     dần thật sự trải dài 0.34->0.44 tiến độ (đó là TOÁN, không phải riêng
+     thuộc tính transition). Đúng quy ước đã dùng ở parallax/nudge trong file
+     khác của trang: dưới reduced-motion, mọi hiệu ứng theo cuộn đổi thành một
+     NGƯỠNG CỨNG (0 hoặc 1), không còn dải chuyển tiếp nào — nhân hệ số cực lớn
+     ép công thức clamp() cũ thành bậc thang tại đúng 0.44, không lệch ngưỡng
+     so với bản có chuyển động. */
+  .fold {
+    opacity: clamp(0, calc((0.44 - var(--scrub-progress, 0)) * 100000), 1);
+    transition: none;
+  }
 }
 
 .fold__row {
