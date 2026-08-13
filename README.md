@@ -7,6 +7,10 @@ toolchain end to end on real footage rather than on a fixture.
 
 **Live:** https://jangtrinh.github.io/design-os-drone-showcase/
 
+![Scroll-through demo of the OPAH ONE page: scroll-scrubbed drone film sequences, an exploded-view annotation tour, and token-compiled sections](docs/demo.gif)
+
+*Full-quality recording: [docs/demo.mp4](docs/demo.mp4).*
+
 ---
 
 ## The product on this page is fictional
@@ -32,6 +36,28 @@ produces the same bytes.
 | Scroll engine | `ui tenant-scaffold` | Emits the embeddable scrub engine verbatim. It reads the host page through exactly one door — its own bounding box — and never touches window scroll, body height, or the document root. |
 | Choreography | GSAP 3 + IntersectionObserver | Static sections only. The scrub scenes are owned by the engine and CSS; no property has two writers. |
 | Gates | `ui tenant-lint`, `taste-lint`, `a11y-lint`, `validate-layout`, `content-lint` | The page does not ship with any of them red. |
+
+### Reproduce it with DESIGN:OS
+
+Every `ui` command in the table ships with [DESIGN:OS](https://github.com/jangtrinh/design-os).
+Install the toolchain, wire it into your project, then describe the page you want in plain
+words inside the agent CLI you already use (Claude Code, Codex CLI, or Antigravity):
+
+```sh
+git clone https://github.com/jangtrinh/design-os ease-design && cd ease-design
+npm install && npm run build && npm link
+cd ~/your-project
+ui init --runtime claude       # or: codex / antigravity
+```
+
+```
+/ui:generate a scroll-scrub product page for a cinematic drone — film-driven hero,
+exploded-view annotation tour, specs compiled from DTCG tokens
+```
+
+Start from the
+[60-second quickstart](https://github.com/jangtrinh/design-os/blob/main/QUICKSTART.md);
+the same pipeline and gates that shipped this page run identically on your machine.
 
 ## Accessibility
 
