@@ -44,10 +44,10 @@ Install the toolchain, wire it into your project, then describe the page you wan
 words inside the agent CLI you already use (Claude Code, Codex CLI, or Antigravity):
 
 ```sh
-git clone https://github.com/jangtrinh/design-os ease-design && cd ease-design
-npm install && npm run build && npm link
+npm install -g ease-design     # the DESIGN:OS kernel — the `ui` binary
 cd ~/your-project
 ui init --runtime claude       # or: codex / antigravity
+ui doctor --cwd .              # confirms the project is wired
 ```
 
 ```
