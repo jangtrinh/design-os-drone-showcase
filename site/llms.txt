@@ -1,0 +1,17 @@
+# OPAH ONE (design-os-drone-showcase)
+
+> OPAH ONE: a 249-gram drone with a molded guard ring, 4K60 video, and 31-minute flight time. Built with Design:OS — tenant-contract scroll-scrub and GSAP choreography.
+
+An interactive marketing showcase website demonstrating scroll-scrubbed 3D kinematic storytelling, precision typography, and mobile performance verification for the OPAH ONE sub-250g indoor/outdoor drone.
+
+## Documentation & Pages
+
+- [Interactive Showcase](https://jangtrinh.github.io/design-os-drone-showcase/): The primary scroll-scrubbed interactive experience.
+- [GitHub Repository](https://github.com/jangtrinh/design-os-drone-showcase): Project source code, CSS design tokens, and automation scripts.
+
+## Product Specifications
+
+- **Weight**: 249 grams (sub-250g regulatory category, no FAA registration required for recreational flight).
+- **Camera**: 4K at 60fps stabilized mechanical gimbal.
+- **Flight Time**: Up to 31 minutes per battery charge.
+- **Indoor Flight**: Integrated 360-degree molded guard ring for obstacle bounce resilience.
