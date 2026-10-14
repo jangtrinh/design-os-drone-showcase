@@ -1,0 +1,41 @@
+{
+  "name": "design-os-drone-showcase",
+  "description": "Reference hardware product showcase and scroll-scrub kinematic storytelling engine for the sub-249g OPAH ONE indoor cinewhoop drone.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jang Trinh",
+    "url": "https://github.com/jangtrinh"
+  },
+  "homepage": "https://jangtrinh.github.io/design-os-drone-showcase/",
+  "repository": "https://github.com/jangtrinh/design-os-drone-showcase",
+  "license": "MIT",
+  "keywords": [
+    "hardware-showcase",
+    "drone",
+    "scroll-kinematics",
+    "industrial-design",
+    "cad-callouts",
+    "design-os"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "DESIGN:OS OPAH ONE Drone Showcase",
+    "shortDescription": "Reference hardware product showcase and scroll-scrub kinematic storytelling engine for the sub-249g OPAH ONE indoor cinewhoop drone.",
+    "longDescription": "Demonstrates how DESIGN:OS combines 2:1 axonometric CAD callouts, scroll-coupled explosion kinematics, acoustic/thrust telemetry tables, and zero-dependency GitHub Pages engineering for physical hardware launches.",
+    "developerName": "DESIGN:OS",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://jangtrinh.github.io/design-os-drone-showcase/",
+    "privacyPolicyURL": "https://github.com/jangtrinh/design-os-drone-showcase/blob/main/PRIVACY.md",
+    "defaultPrompt": [
+      "Scaffold a hardware launch showcase page with scroll-scrubbed exploded assembly stages and BOM specification tables.",
+      "Generate 2:1 axonometric technical callout diagrams highlighting propulsion ducts, flight controller stack, and mass budget.",
+      "Verify our hardware product page against the DESIGN:OS 10-gate SEO, AEO, and GEO discovery harness."
+    ],
+    "brandColor": "#202020",
+    "logo": "./site/images/cover.png"
+  }
+}

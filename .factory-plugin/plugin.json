@@ -1,0 +1,20 @@
+{
+  "name": "design-os-drone-showcase",
+  "description": "Reference hardware product showcase and scroll-scrub kinematic storytelling engine for the sub-249g OPAH ONE indoor cinewhoop drone.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jang Trinh",
+    "url": "https://github.com/jangtrinh"
+  },
+  "homepage": "https://jangtrinh.github.io/design-os-drone-showcase/",
+  "repository": "https://github.com/jangtrinh/design-os-drone-showcase",
+  "license": "MIT",
+  "keywords": [
+    "hardware-showcase",
+    "drone",
+    "scroll-kinematics",
+    "industrial-design",
+    "cad-callouts",
+    "design-os"
+  ]
+}
